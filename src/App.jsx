@@ -335,7 +335,6 @@ export default function App() {
             <div className="logo-icon">S</div>
             <span className="logo-name">Summarize</span>
           </div>
-          <span className="header-badge">Powered by Gemini AI</span>
         </motion.header>
 
         {/* ── Hero Section ── */}
