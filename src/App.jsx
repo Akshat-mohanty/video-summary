@@ -339,10 +339,6 @@ export default function App() {
 
         {/* ── Hero Section ── */}
         <section className="hero">
-          <motion.div className="hero-eyebrow" variants={fadeUp} custom={0} initial="hidden" animate="visible">
-            AI Video Analyzer
-          </motion.div>
-
           <AnimatedTitle />
 
           <motion.p className="hero-subtitle" variants={fadeUp} custom={2} initial="hidden" animate="visible">
