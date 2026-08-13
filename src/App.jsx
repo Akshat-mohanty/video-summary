@@ -528,8 +528,7 @@ export default function App() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <span>Summarize — Powered by Google Gemini AI.</span>
-          <span>Instant video transcript summaries under 150 words.</span>
+          <span>© 2026 Akshat Mohanty. Built with ❤️</span>
         </motion.footer>
       </div>
     </div>
