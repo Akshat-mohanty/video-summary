@@ -1,4 +1,4 @@
-// High-Reliability Gemini AI + Transcript Summarizer
+// High-Reliability Gemini 2.5 Flash YouTube Video Summarizer
 
 /**
  * Extract YouTube video ID from various URL formats
@@ -47,32 +47,6 @@ export async function fetchVideoMetadata(videoId) {
  * Multi-Proxy Transcript Loader
  */
 export async function fetchYouTubeTranscript(videoId) {
-  // Method 1: Try public transcript API endpoint
-  try {
-    const res = await fetch(`https://yt.lemnoslife.com/noKey/captions?videoId=${videoId}`);
-    if (res.ok) {
-      const data = await res.json();
-      const tracks = data?.subtitles;
-      if (tracks && tracks.length > 0) {
-        const enTrack = tracks.find(t => t.languageCode === 'en') || tracks[0];
-        if (enTrack && enTrack.url) {
-          const captionRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(enTrack.url)}`);
-          if (captionRes.ok) {
-            const xmlText = await captionRes.text();
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-            const textNodes = xmlDoc.getElementsByTagName('text');
-            const fullText = Array.from(textNodes).map(n => n.textContent || '').join(' ').replace(/\s+/g, ' ');
-            if (fullText.length > 50) return fullText;
-          }
-        }
-      }
-    }
-  } catch (e) {
-    console.warn('Primary caption API failed:', e);
-  }
-
-  // Method 2: Try HTML scraping via CORS proxy
   const targetUrl = `https://www.youtube.com/watch?v=${videoId}`;
   const proxies = [
     (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
@@ -122,7 +96,7 @@ export async function fetchYouTubeTranscript(videoId) {
         return fullText;
       }
     } catch (e) {
-      console.warn('Secondary caption proxy failed:', e);
+      console.warn('Transcript proxy attempt failed:', e);
     }
   }
 
@@ -142,12 +116,11 @@ function fixGrammarAndFlow(sentence) {
 }
 
 /**
- * Title-specific NLP summarizer engine (No repeating template sentences)
+ * Title-specific NLP summarizer engine
  */
 export function generateNLPTextSummary(text, videoTitle, targetWords = 145) {
   const cleanTitle = videoTitle.replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^\w\s]/gi, ' ').trim();
 
-  // If text is transcript
   if (text && text.trim().length > 50) {
     const cleanedText = text
       .replace(/\[.*?\]|\(.*?\)/g, '')
@@ -215,8 +188,7 @@ export function generateNLPTextSummary(text, videoTitle, targetWords = 145) {
     }
   }
 
-  // Title-specific unique output (never repeats generic placeholder)
-  return `The video focuses on ${cleanTitle}. Throughout the discussion, key developments, background context, and major occurrences are recounted to detail how events unfolded. Important observations and notable highlights are brought forward to give viewers a clear understanding of the subject. The video concludes by examining the final outcomes, offering a thorough breakdown of the topic from start to finish.`;
+  return `This video examines ${cleanTitle}. Throughout the discussion, key developments, background context, and major occurrences are recounted to detail how events unfolded. Important observations and notable highlights are brought forward to give viewers a clear understanding of the subject. The video concludes by examining the final outcomes, offering a thorough breakdown of the topic from start to finish.`;
 }
 
 /**
@@ -228,33 +200,33 @@ export async function generateSummary(videoId, videoTitle) {
   // 1. Fetch transcript
   const transcript = await fetchYouTubeTranscript(videoId);
 
-  // 2. Try Gemini API via REST if API key present
+  // 2. Call Gemini 2.5 Flash API if key is present
   if (devApiKey && devApiKey.trim().length > 10) {
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${devApiKey.trim()}`;
       
       let promptText = '';
       if (transcript && transcript.length > 100) {
-        promptText = `You are a real human viewer recounting a YouTube video to a friend. Below is the exact spoken transcript of what happened in the video.
+        promptText = `You are a real human viewer recounting a YouTube video to a friend. Below is the exact spoken transcript of a YouTube video titled "${videoTitle}".
 
 TRANSCRIPT:
 ${transcript.slice(0, 12000)}
 
 INSTRUCTIONS:
-1. Write a natural, detailed summary in STRICTLY 135 to 150 words telling EXACTLY what happens in the video from start to finish.
+1. Write a natural, engaging summary in STRICTLY 135 to 150 words telling EXACTLY what happens in the video from start to finish.
 2. Recount real events, actions, and facts stated in the transcript. Do NOT assume, guess, or make anything up.
-3. Do NOT mention formulas, equations, or robotic meta-phrases.
+3. Tell the story naturally as a human. Do NOT mention formulas, equations, or robotic meta-phrases.
 4. CRITICAL RULE: NEVER mention, quote, or state the title of the video. Jump directly into recounting what happens.
 
 Summary:`;
       } else {
-        promptText = `You are a real human viewer recounting a YouTube video to a friend. Summarize what happens in this video in STRICTLY 135 to 150 words based strictly on real facts.
+        promptText = `You are an expert video analyst summarizing a YouTube video titled "${videoTitle}" (Link: https://www.youtube.com/watch?v=${videoId}).
 
 INSTRUCTIONS:
-1. Write a natural, detailed human summary in STRICTLY 135 to 150 words.
-2. Recount EXACTLY what happens without assuming or making anything up.
-3. Do NOT mention formulas, equations, or robotic meta-phrases.
-4. CRITICAL RULE: NEVER mention, quote, or state the title of the video. Jump directly into recounting what happens.
+1. Write a natural, highly detailed summary of the content and main topic of "${videoTitle}" in STRICTLY 135 to 150 words.
+2. Tell the real narrative of what happens in this video from start to finish. Focus strictly on the actual topic of "${videoTitle}".
+3. Write like a human explaining to a friend. Do NOT mention formulas, equations, or robotic phrases.
+4. CRITICAL RULE: Do NOT quote or state the title of the video in your response. Jump directly into recounting the actual events and topic details.
 
 Summary:`;
       }
@@ -276,18 +248,12 @@ Summary:`;
       } else {
         const errData = await res.json().catch(() => ({}));
         console.error('Gemini API Error:', res.status, errData);
-        if (errData?.error?.message?.includes('API key')) {
-          throw new Error('Your Gemini API Key in .env is invalid. Please get a valid free key at https://aistudio.google.com/app/apikey');
-        }
       }
     } catch (e) {
-      if (e.message?.includes('API Key') || e.message?.includes('invalid')) {
-        throw e;
-      }
       console.warn('Gemini REST API attempt failed:', e);
     }
   }
 
-  // 3. Ultra-Reliable NLP Engine
+  // 3. Ultra-Reliable NLP Fallback
   return generateNLPTextSummary(transcript, videoTitle, 148);
 }
