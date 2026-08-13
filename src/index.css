@@ -223,10 +223,10 @@ body {
 .analyzer-section {
   width: 100%;
   max-width: 720px;
-  padding: 0 var(--space-xl) var(--space-3xl);
+  padding: 0 var(--space-xl) var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-md);
 }
 
 .input-card {
@@ -443,6 +443,7 @@ body {
    ============================================================ */
 .summary-section {
   padding: 0 var(--space-xl) var(--space-xl);
+  margin-top: 12px;
   width: 100%;
   max-width: 720px;
 }
