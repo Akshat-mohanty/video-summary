@@ -413,11 +413,12 @@ body {
 }
 
 .video-title {
-  font-family: var(--font-serif);
-  font-size: 20px;
-  line-height: 1.35;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
 }
 
 .video-channel {
