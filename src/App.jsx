@@ -27,7 +27,7 @@ const scaleUp = {
 
 // ─── Animated Hero Title ──────────────────────────────────────────────────────
 function AnimatedTitle() {
-  const line1 = "Understand any";
+  const line1 = "Summarize any";
   const line2 = "YouTube video";
   const line3 = "instantly.";
 
