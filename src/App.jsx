@@ -196,7 +196,7 @@ function VideoCard({ meta }) {
 
 // ─── Step Indicator Bar ───────────────────────────────────────────────────────
 function StepsIndicator({ step }) {
-  const steps = ['Paste Link', 'Gemini AI Analysis', 'Read Summary'];
+  const steps = ['Paste Link', 'Summarizing', 'Read Summary'];
   return (
     <motion.div className="steps" variants={fadeUp} custom={3} initial="hidden" animate="visible">
       {steps.map((label, i) => (
@@ -307,7 +307,7 @@ export default function App() {
   const phaseLabel = {
     idle: '',
     fetching: 'Fetching video info…',
-    analyzing: 'Gemini AI Analyzing…',
+    analyzing: 'Summarizing…',
     done: 'Done',
     error: 'Error',
   };
