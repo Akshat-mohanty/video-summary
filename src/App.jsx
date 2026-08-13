@@ -342,7 +342,7 @@ export default function App() {
           <AnimatedTitle />
 
           <motion.p className="hero-subtitle" variants={fadeUp} custom={2} initial="hidden" animate="visible">
-            Paste any YouTube link and get a detailed Gemini AI summary in 150 words or fewer — no signup required.
+            Paste any YouTube link and get a detailed summary in 150 words or fewer.
           </motion.p>
         </section>
 

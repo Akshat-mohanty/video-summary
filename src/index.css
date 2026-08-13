@@ -215,6 +215,8 @@ body {
   max-width: 480px;
   line-height: 1.65;
   font-weight: 400;
+  text-align: center;
+  margin: 0 auto;
 }
 
 /* ============================================================
