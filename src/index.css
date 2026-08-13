@@ -348,9 +348,12 @@ body {
 .video-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .video-thumbnail-wrap {
@@ -373,18 +376,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.14);
   transition: background 0.2s ease;
 }
 
 .video-play-overlay:hover {
-  background: rgba(0, 0, 0, 0.22);
+  background: rgba(0, 0, 0, 0.24);
 }
 
 .play-button {
-  width: 64px;
-  height: 64px;
-  background: rgba(253, 252, 247, 0.92);
+  width: 48px;
+  height: 48px;
+  background: rgba(253, 252, 247, 0.94);
   backdrop-filter: blur(8px);
   border-radius: 50%;
   display: flex;
@@ -392,7 +395,7 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: transform 0.2s ease;
-  border: 1px solid rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.7);
   text-decoration: none;
 }
 
@@ -402,14 +405,16 @@ body {
 
 .play-button svg {
   color: var(--text-primary);
-  margin-left: 4px;
+  margin-left: 3px;
+  width: 18px;
+  height: 18px;
 }
 
 .video-meta {
-  padding: var(--space-lg) var(--space-xl);
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 4px;
 }
 
 .video-title {
