@@ -469,7 +469,7 @@ export default function App() {
                 <div className="summary-header">
                   <span className="summary-label">
                     <span className="summary-label-dot" />
-                    Gemini AI Summary
+                    Summary
                   </span>
                   <span className="summary-word-count">{wordCount} words</span>
                 </div>

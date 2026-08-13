@@ -512,11 +512,12 @@ body {
 }
 
 .summary-text {
-  font-family: var(--font-serif);
-  font-size: 21px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", system-ui, sans-serif;
+  font-size: 19px;
   line-height: 1.65;
-  color: rgba(253, 252, 247, 0.92);
-  letter-spacing: -0.01em;
+  color: rgba(253, 252, 247, 0.94);
+  letter-spacing: -0.015em;
+  font-weight: 400;
   position: relative;
   z-index: 1;
 }
