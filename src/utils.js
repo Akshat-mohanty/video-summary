@@ -237,18 +237,26 @@ export async function generateSummary(videoId, videoTitle) {
       
       let promptText = '';
       if (transcript && transcript.length > 100) {
-        promptText = `You are a video analyst. Summarize this YouTube video transcript in STRICTLY 135 to 150 words. Include specific details, formulas, numbers, steps, or major events. Write natural human narrative prose.
-
-CRITICAL RULE: NEVER mention, quote, or state the title of the video in your response. Jump straight into the facts, details, and events described.
+        promptText = `You are a real viewer explaining a YouTube video to a friend. Below is the exact spoken transcript of what happened in the video.
 
 TRANSCRIPT:
 ${transcript.slice(0, 12000)}
 
+INSTRUCTIONS:
+1. Write a natural, engaging summary in STRICTLY 135 to 150 words.
+2. Recount EXACTLY what actually happens in the video from start to finish based ONLY on the transcript. Do NOT assume, guess, or make anything up.
+3. Tell the story naturally as a human. Do NOT mention formulas, equations, or robotic meta-phrases.
+4. CRITICAL RULE: NEVER mention, quote, or state the title of the video. Jump directly into recounting what happens.
+
 Summary:`;
       } else {
-        promptText = `You are a video analyst. Summarize the YouTube video topic in STRICTLY 135 to 150 words. Include specific details, formulas, steps, or major events. Write natural human narrative prose.
+        promptText = `You are a real viewer explaining a YouTube video to a friend. Summarize what actually happens in the video in STRICTLY 135 to 150 words based strictly on real facts.
 
-CRITICAL RULE: NEVER mention, quote, or state the title of the video in your response. Jump straight into the facts, details, and events.
+INSTRUCTIONS:
+1. Write a natural, engaging human summary in STRICTLY 135 to 150 words.
+2. Recount EXACTLY what happens without assuming or making anything up.
+3. Do NOT mention formulas, equations, or robotic meta-phrases.
+4. CRITICAL RULE: NEVER mention, quote, or state the title of the video. Jump directly into recounting what happens.
 
 Summary:`;
       }
