@@ -332,8 +332,8 @@ export default function App() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="logo">
-            <div className="logo-icon">T</div>
-            <span className="logo-name">Transcripta</span>
+            <div className="logo-icon">S</div>
+            <span className="logo-name">Summarize</span>
           </div>
           <span className="header-badge">Powered by Gemini AI</span>
         </motion.header>
@@ -528,7 +528,7 @@ export default function App() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <span>Transcripta — Powered by Google Gemini AI.</span>
+          <span>Summarize — Powered by Google Gemini AI.</span>
           <span>Instant video transcript summaries under 150 words.</span>
         </motion.footer>
       </div>
