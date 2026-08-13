@@ -167,7 +167,7 @@ body {
 .hero {
   width: 100%;
   max-width: 860px;
-  padding: var(--space-3xl) var(--space-xl) var(--space-2xl);
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -827,7 +827,7 @@ body {
     padding: var(--space-md) var(--space-lg);
   }
   .hero {
-    padding: var(--space-2xl) var(--space-md) var(--space-xl);
+    padding: var(--space-lg) var(--space-md) var(--space-md);
   }
   .analyzer-section,
   .summary-section {
