@@ -140,10 +140,8 @@ function fixGrammarAndFlow(sentence) {
  * High-Accuracy Fact & Detail Extractor (In-Browser NLP Engine)
  */
 export function generateNLPTextSummary(text, title, targetWords = 148) {
-  const cleanTitle = title.replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^\w\s]/gi, ' ').trim();
-
   if (!text || text.trim().length === 0) {
-    return `This video focuses directly on ${cleanTitle}. The creator presents the core problem, breaks down step-by-step principles, and explains the specific mechanisms involved. Important technical details, key formulas, and practical examples are presented to show how to arrive at the solution. The video concludes with actionable takeaways, summarizing the essential rules and methods demonstrated throughout the session.`;
+    return `This presentation breaks down the core problem, step-by-step principles, and specific mechanisms involved. Important technical details, key formulas, and practical examples are presented to show how to arrive at the solution. The video concludes with actionable takeaways, summarizing the essential rules and methods demonstrated throughout the session.`;
   }
 
   const cleanedText = text
@@ -239,14 +237,18 @@ export async function generateSummary(videoId, videoTitle) {
       
       let promptText = '';
       if (transcript && transcript.length > 100) {
-        promptText = `You are a video analyst. Summarize this YouTube video transcript titled "${videoTitle}" in STRICTLY 135 to 150 words. Include specific details, formulas, numbers, steps, or major events. Write natural human narrative prose. Do NOT use cliché intros.
+        promptText = `You are a video analyst. Summarize this YouTube video transcript in STRICTLY 135 to 150 words. Include specific details, formulas, numbers, steps, or major events. Write natural human narrative prose.
+
+CRITICAL RULE: NEVER mention, quote, or state the title of the video in your response. Jump straight into the facts, details, and events described.
 
 TRANSCRIPT:
 ${transcript.slice(0, 12000)}
 
 Summary:`;
       } else {
-        promptText = `You are a video analyst. Summarize the YouTube video titled "${videoTitle}" in STRICTLY 135 to 150 words. Include specific details, formulas, steps, or major events. Write natural human narrative prose. Do NOT use cliché intros.
+        promptText = `You are a video analyst. Summarize the YouTube video topic in STRICTLY 135 to 150 words. Include specific details, formulas, steps, or major events. Write natural human narrative prose.
+
+CRITICAL RULE: NEVER mention, quote, or state the title of the video in your response. Jump straight into the facts, details, and events.
 
 Summary:`;
       }
@@ -271,6 +273,6 @@ Summary:`;
     }
   }
 
-  // 3. Ultra-Reliable In-Browser NLP Fallback (never throws "Load failed")
+  // 3. Ultra-Reliable In-Browser NLP Fallback
   return generateNLPTextSummary(transcript, videoTitle, 148);
 }

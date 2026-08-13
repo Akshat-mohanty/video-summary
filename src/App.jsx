@@ -455,7 +455,34 @@ export default function App() {
         </section>
 
         {/* ── Summary Box ── */}
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
+          {(phase === 'analyzing' || (loading && !summary)) && (
+            <motion.section
+              className="summary-section"
+              key="summary-skeleton"
+              variants={scaleUp}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <div className="summary-card">
+                <div className="summary-header">
+                  <span className="summary-label">
+                    <span className="summary-label-dot" />
+                    Generating Summary…
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 12 }}>
+                  <div className="dark-skeleton" style={{ height: 18, width: '100%' }} />
+                  <div className="dark-skeleton" style={{ height: 18, width: '92%' }} />
+                  <div className="dark-skeleton" style={{ height: 18, width: '96%' }} />
+                  <div className="dark-skeleton" style={{ height: 18, width: '86%' }} />
+                  <div className="dark-skeleton" style={{ height: 18, width: '55%' }} />
+                </div>
+              </div>
+            </motion.section>
+          )}
+
           {summary && (
             <motion.section
               className="summary-section"
