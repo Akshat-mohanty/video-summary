@@ -1,41 +1,70 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { extractVideoId, fetchVideoMetadata, generateSummary } from './utils';
 import './index.css';
 
 // ─── Framer Motion Animation Variants ───────────────────────────────────────
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] },
   }),
 };
 
 const scaleUp = {
-  hidden: { opacity: 0, scale: 0.94, y: 20 },
+  hidden: { opacity: 0, scale: 0.95, y: 16 },
   visible: {
-    opacity: 1, scale: 1, y: 0,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
   },
   exit: {
-    opacity: 0, scale: 0.96, y: -10,
-    transition: { duration: 0.3, ease: 'easeIn' },
+    opacity: 0,
+    scale: 0.96,
+    y: -10,
+    transition: { duration: 0.25, ease: 'easeIn' },
   },
 };
 
+// ─── Sample Video Presets ───────────────────────────────────────────────────
+const SAMPLE_VIDEOS = [
+  { label: '🎬 Tech Evolution', url: 'https://www.youtube.com/watch?v=M576WGiDBdQ' },
+  { label: '🪐 Deep Space', url: 'https://www.youtube.com/watch?v=libKVRa01L8' },
+  { label: '🧠 AI Revolution', url: 'https://www.youtube.com/watch?v=zjkBMFhNj_g' },
+];
+
+// ─── FAQ Questions Data ─────────────────────────────────────────────────────
+const FAQ_ITEMS = [
+  {
+    q: 'How does Summarize analyze videos?',
+    a: 'Summarize extracts the actual spoken transcript and closed captions directly from YouTube, then uses Gemini 2.5 Flash to synthesize a factual, human-written summary under 150 words.',
+  },
+  {
+    q: 'Does it work on any YouTube video?',
+    a: 'Yes! It works on public YouTube videos, shorts, podcasts, and tutorials with English or auto-generated captions.',
+  },
+  {
+    q: 'Is there a length or rate limit?',
+    a: 'Summarize works on videos of any length from 60-second shorts to 3-hour long-form lectures in seconds.',
+  },
+];
+
 // ─── Animated Hero Title ──────────────────────────────────────────────────────
 function AnimatedTitle() {
-  const line1 = "Summarize any";
-  const line2 = "YouTube video";
-  const line3 = "instantly.";
+  const line1 = 'Summarize any';
+  const line2 = 'YouTube video';
+  const line3 = 'instantly.';
 
   const wordVariants = {
-    hidden: { opacity: 0, y: 30, filter: 'blur(4px)' },
+    hidden: { opacity: 0, y: 24, filter: 'blur(4px)' },
     visible: (i) => ({
-      opacity: 1, y: 0, filter: 'blur(0px)',
-      transition: { duration: 0.65, delay: 0.1 + i * 0.06, ease: [0.22, 1, 0.36, 1] },
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      transition: { duration: 0.6, delay: 0.08 + i * 0.05, ease: [0.22, 1, 0.36, 1] },
     }),
   };
 
@@ -94,10 +123,12 @@ function AnimatedTitle() {
 function TypewriterText({ text }) {
   const words = text.split(' ');
   const wordVariants = {
-    hidden: { opacity: 0, y: 8, filter: 'blur(3px)' },
+    hidden: { opacity: 0, y: 6, filter: 'blur(3px)' },
     visible: (i) => ({
-      opacity: 1, y: 0, filter: 'blur(0px)',
-      transition: { duration: 0.4, delay: i * 0.035, ease: 'easeOut' },
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      transition: { duration: 0.35, delay: i * 0.03, ease: 'easeOut' },
     }),
   };
 
@@ -109,7 +140,7 @@ function TypewriterText({ text }) {
           custom={i}
           variants={wordVariants}
           className="summary-word"
-          style={{ display: 'inline-block', marginRight: '0.26em' }}
+          style={{ display: 'inline-block', marginRight: '0.24em' }}
         >
           {word}
         </motion.span>
@@ -118,7 +149,7 @@ function TypewriterText({ text }) {
   );
 }
 
-// ─── Toast Notifications ──────────────────────────────────────────────────────
+// ─── Toast Notification ───────────────────────────────────────────────────────
 function Toast({ message, type = 'default', onClose }) {
   useEffect(() => {
     const t = setTimeout(onClose, 4000);
@@ -127,13 +158,15 @@ function Toast({ message, type = 'default', onClose }) {
 
   const icons = {
     error: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-        <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="15" y1="9" x2="9" y2="15" />
+        <line x1="9" y1="9" x2="15" y2="15" />
       </svg>
     ),
     success: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-        <polyline points="20 6 9 17 4 12"/>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <polyline points="20 6 9 17 4 12" />
       </svg>
     ),
   };
@@ -141,13 +174,13 @@ function Toast({ message, type = 'default', onClose }) {
   return (
     <motion.div
       className={`toast ${type}`}
-      initial={{ opacity: 0, x: 60, scale: 0.92 }}
+      initial={{ opacity: 0, x: 50, scale: 0.94 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 60, scale: 0.92 }}
+      exit={{ opacity: 0, x: 50, scale: 0.94 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
     >
       {icons[type]}
-      {message}
+      <span>{message}</span>
     </motion.div>
   );
 }
@@ -180,8 +213,8 @@ function VideoCard({ meta }) {
             className="play-button"
             title="Watch on YouTube"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <polygon points="5 3 19 12 5 21 5 3"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3" />
             </svg>
           </a>
         </div>
@@ -198,24 +231,67 @@ function VideoCard({ meta }) {
 function StepsIndicator({ step }) {
   const steps = ['Paste Link', 'Summarizing', 'Read Summary'];
   return (
-    <motion.div className="steps" variants={fadeUp} custom={3} initial="hidden" animate="visible">
+    <motion.div
+      className="steps-container"
+      variants={fadeUp}
+      custom={3}
+      initial="hidden"
+      animate="visible"
+    >
       {steps.map((label, i) => (
-        <div key={i} className={`step ${step > i ? 'active' : ''}`}>
-          <motion.div
-            className="step-number"
-            animate={step > i ? { scale: [1, 1.2, 1] } : {}}
-            transition={{ duration: 0.4, type: 'spring' }}
-          >
-            {step > i ? (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            ) : i + 1}
-          </motion.div>
-          <span className="step-label">{label}</span>
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className={`step-item ${step >= i + 1 ? 'active' : ''}`}>
+            <motion.div
+              className="step-num"
+              animate={step >= i + 1 ? { scale: [1, 1.18, 1] } : {}}
+              transition={{ duration: 0.35, type: 'spring' }}
+            >
+              {step > i + 1 ? (
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                i + 1
+              )}
+            </motion.div>
+            <span className="step-text">{label}</span>
+          </div>
+          {i < steps.length - 1 && <div className="step-divider" />}
         </div>
       ))}
     </motion.div>
+  );
+}
+
+// ─── FAQ Accordion Item ───────────────────────────────────────────────────────
+function FaqItem({ q, a }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="faq-item">
+      <button className="faq-question" onClick={() => setOpen(!open)}>
+        <span>{q}</span>
+        <motion.span
+          className="faq-icon"
+          animate={{ rotate: open ? 45 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          +
+        </motion.span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+          >
+            <p className="faq-answer">{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -228,28 +304,76 @@ export default function App() {
   const [summary, setSummary] = useState('');
   const [toasts, setToasts] = useState([]);
   const [copiedRecently, setCopiedRecently] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+
+  const inputRef = useRef(null);
 
   const addToast = useCallback((message, type = 'default') => {
     const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
+    setToasts((prev) => [...prev, { id, message, type }]);
   }, []);
 
   const removeToast = useCallback((id) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const handleAnalyze = async () => {
-    const trimmedUrl = url.trim();
-    if (!trimmedUrl) {
+  // Text-to-Speech handler
+  const handleToggleSpeech = () => {
+    if (!summary || !window.speechSynthesis) return;
+
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+    } else {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(summary);
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      utterance.onend = () => setSpeaking(false);
+      utterance.onerror = () => setSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+      setSpeaking(true);
+    }
+  };
+
+  // Clean up speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    };
+  }, []);
+
+  // Paste from clipboard helper
+  const handlePasteClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text && text.includes('youtube.com') || text.includes('youtu.be')) {
+        setUrl(text.trim());
+        addToast('Link pasted from clipboard!', 'success');
+      } else if (text) {
+        setUrl(text.trim());
+      }
+    } catch {
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleAnalyze = async (overrideUrl) => {
+    const targetUrl = (overrideUrl || url).trim();
+    if (!targetUrl) {
       addToast('Please paste a YouTube URL first.', 'error');
       return;
     }
 
-    const vid = extractVideoId(trimmedUrl);
+    const vid = extractVideoId(targetUrl);
     if (!vid) {
       addToast('Invalid YouTube URL. Please check the link and try again.', 'error');
       return;
     }
+
+    // Cancel speech if already playing
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    setSpeaking(false);
 
     setLoading(true);
     setSummary('');
@@ -261,7 +385,7 @@ export default function App() {
       let meta = null;
       try {
         meta = await fetchVideoMetadata(vid);
-      } catch (e) {
+      } catch {
         meta = {
           title: 'YouTube Video',
           channel: 'Creator',
@@ -273,13 +397,13 @@ export default function App() {
       setVideoMeta(meta);
       setPhase('analyzing');
 
-      // 2. Generate summary (Gemini REST API -> automatic zero-fail NLP fallback)
+      // 2. Generate Gemini 2.5 Flash summary
       const sum = await generateSummary(vid, meta.title);
       setSummary(sum);
       setPhase('done');
     } catch (err) {
       console.error(err);
-      addToast('Could not analyze this video link. Please try another link.', 'error');
+      addToast(err.message || 'Could not analyze this video link. Please try another.', 'error');
       setPhase('error');
     } finally {
       setLoading(false);
@@ -295,19 +419,27 @@ export default function App() {
   };
 
   const handleReset = () => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    setSpeaking(false);
     setUrl('');
     setVideoMeta(null);
     setSummary('');
     setPhase('idle');
   };
 
-  const currentStep = phase === 'idle' ? 0 : phase === 'fetching' || phase === 'analyzing' ? 1 : phase === 'done' ? 3 : 0;
+  const handleTrySample = (sampleUrl) => {
+    setUrl(sampleUrl);
+    handleAnalyze(sampleUrl);
+  };
+
+  const currentStep = phase === 'idle' ? 1 : phase === 'fetching' || phase === 'analyzing' ? 2 : phase === 'done' ? 3 : 1;
   const wordCount = summary ? summary.split(/\s+/).filter(Boolean).length : 0;
+  const readingTimeSeconds = Math.max(15, Math.round((wordCount / 200) * 60));
 
   const phaseLabel = {
     idle: '',
-    fetching: 'Fetching video info…',
-    analyzing: 'Summarizing…',
+    fetching: 'Connecting to YouTube…',
+    analyzing: 'Summarizing video…',
     done: 'Done',
     error: 'Error',
   };
@@ -317,34 +449,95 @@ export default function App() {
       {/* Toast Notifications */}
       <div className="toast-container">
         <AnimatePresence>
-          {toasts.map(t => (
+          {toasts.map((t) => (
             <Toast key={t.id} message={t.message} type={t.type} onClose={() => removeToast(t.id)} />
           ))}
         </AnimatePresence>
       </div>
 
       <div className="page-content">
-        {/* ── Header ── */}
-        <motion.header
-          className="header"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="logo">
-            <div className="logo-icon">S</div>
-            <span className="logo-name">Summarize</span>
-          </div>
-        </motion.header>
+        {/* ── Floating Island Header ── */}
+        <div className="header-wrapper">
+          <motion.header
+            className="header"
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="logo">
+              <div className="logo-icon">S</div>
+              <span className="logo-name">Summarize</span>
+            </div>
+
+            <div className="header-right">
+              <div className="status-badge">
+                <span className="status-dot" />
+                <span>Gemini 2.5 Flash Online</span>
+              </div>
+              <a
+                href="https://github.com/Akshat-mohanty/video-summary"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="github-link"
+                title="View Source on GitHub"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </motion.header>
+        </div>
 
         {/* ── Hero Section ── */}
         <section className="hero">
+          <motion.div
+            className="hero-pill"
+            variants={fadeUp}
+            custom={0}
+            initial="hidden"
+            animate="visible"
+          >
+            <span>✦</span>
+            <span>Instant Video Intelligence</span>
+          </motion.div>
+
           <AnimatedTitle />
 
-          <motion.p className="hero-subtitle" variants={fadeUp} custom={2} initial="hidden" animate="visible">
+          <motion.p
+            className="hero-subtitle"
+            variants={fadeUp}
+            custom={2}
+            initial="hidden"
+            animate="visible"
+          >
             Paste any YouTube link to get a detailed summary<br />
             <span>in 150 words or fewer.</span>
           </motion.p>
+
+          {/* Quick 1-Click Sample Chips */}
+          <motion.div
+            className="sample-chips-row"
+            variants={fadeUp}
+            custom={3}
+            initial="hidden"
+            animate="visible"
+          >
+            <span className="sample-chips-label">Try an example:</span>
+            {SAMPLE_VIDEOS.map((s, idx) => (
+              <motion.button
+                key={idx}
+                className="sample-chip"
+                onClick={() => handleTrySample(s.url)}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                disabled={loading}
+              >
+                {s.label}
+              </motion.button>
+            ))}
+          </motion.div>
         </section>
 
         {/* ── Step Indicators ── */}
@@ -359,73 +552,102 @@ export default function App() {
             initial="hidden"
             animate="visible"
           >
-            <label className="input-label" htmlFor="youtube-url-input">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
-                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>
-              </svg>
-              YouTube Video URL
-            </label>
+            <div className="input-header-row">
+              <label className="input-label" htmlFor="youtube-url-input">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+                  <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+                </svg>
+                YouTube Video Link
+              </label>
+
+              {!url && (
+                <button className="paste-button" type="button" onClick={handlePasteClipboard}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  Paste
+                </button>
+              )}
+            </div>
 
             <div className="url-input-row">
-              <motion.input
-                id="youtube-url-input"
-                type="url"
-                className="url-input"
-                placeholder="https://www.youtube.com/watch?v=..."
-                value={url}
-                onChange={e => setUrl(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && !loading && handleAnalyze()}
-                disabled={loading}
-                whileFocus={{ scale: 1.005 }}
-              />
+              <div className="input-field-wrap">
+                <input
+                  id="youtube-url-input"
+                  ref={inputRef}
+                  type="url"
+                  className="url-input"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && !loading && handleAnalyze()}
+                  disabled={loading}
+                />
+                {url && !loading && (
+                  <button
+                    className="clear-input-btn"
+                    onClick={() => setUrl('')}
+                    title="Clear input"
+                    type="button"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+
               <motion.button
                 id="analyze-btn"
                 className="analyze-btn"
-                onClick={handleAnalyze}
+                onClick={() => handleAnalyze()}
                 disabled={loading || !url.trim()}
-                whileHover={!loading ? { scale: 1.03 } : {}}
-                whileTap={!loading ? { scale: 0.96 } : {}}
+                whileHover={!loading ? { scale: 1.02 } : {}}
+                whileTap={!loading ? { scale: 0.97 } : {}}
               >
                 {loading && <span className="shimmer" />}
                 {loading ? (
                   <>
                     <LoadingSpinner />
-                    {phaseLabel[phase]}
+                    <span>{phaseLabel[phase]}</span>
                   </>
                 ) : (
                   <>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                     </svg>
-                    Analyze
+                    <span>Summarize</span>
                   </>
                 )}
               </motion.button>
             </div>
 
-            {(videoMeta || phase !== 'idle') && (
-              <motion.button
-                onClick={handleReset}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: '12px', color: 'var(--text-muted)', alignSelf: 'flex-start',
-                  display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'var(--font-sans)',
-                  padding: '4px 0',
-                }}
-                whileHover={{ color: 'var(--text-primary)' }}
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.28"/>
+            <div className="input-footer-row">
+              <span className="input-hint">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
                 </svg>
-                Analyze another video
-              </motion.button>
-            )}
+                Supports standard videos, shorts, podcasts, and livestreams
+              </span>
+
+              {(videoMeta || phase !== 'idle') && (
+                <button className="reset-btn" type="button" onClick={handleReset}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="1 4 1 10 7 10" />
+                    <path d="M3.51 15a9 9 0 1 0 .49-3.28" />
+                  </svg>
+                  Reset
+                </button>
+              )}
+            </div>
           </motion.div>
 
-          {/* Loading Skeleton */}
+          {/* Loading Video Skeleton */}
           <AnimatePresence mode="wait">
             {(phase === 'fetching' || phase === 'analyzing') && !videoMeta && (
               <motion.div
@@ -435,23 +657,26 @@ export default function App() {
                 animate="visible"
                 exit="exit"
                 style={{
-                  background: 'var(--surface)', border: '1px solid var(--border)',
-                  borderRadius: 'var(--radius-xl)', overflow: 'hidden',
-                  boxShadow: 'var(--shadow-md)',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                  boxShadow: 'var(--shadow-sm)',
+                  maxWidth: '480px',
+                  width: '100%',
+                  margin: '0 auto',
                 }}
               >
                 <div className="skeleton" style={{ aspectRatio: '16/9', width: '100%' }} />
-                <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div className="skeleton" style={{ height: 22, width: '75%', borderRadius: 6 }} />
-                  <div className="skeleton" style={{ height: 14, width: '40%', borderRadius: 4 }} />
+                <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div className="skeleton" style={{ height: 16, width: '80%', borderRadius: 4 }} />
+                  <div className="skeleton" style={{ height: 12, width: '40%', borderRadius: 4 }} />
                 </div>
               </motion.div>
             )}
 
             {/* Video Preview Card */}
-            {videoMeta && (
-              <VideoCard key="video-card" meta={videoMeta} />
-            )}
+            {videoMeta && <VideoCard key="video-card" meta={videoMeta} />}
           </AnimatePresence>
         </section>
 
@@ -472,13 +697,14 @@ export default function App() {
                     <span className="summary-label-dot" />
                     Generating Summary…
                   </span>
+                  <span className="summary-badge-pill">Gemini 2.5 Flash</span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 12 }}>
-                  <div className="dark-skeleton" style={{ height: 18, width: '100%' }} />
-                  <div className="dark-skeleton" style={{ height: 18, width: '92%' }} />
-                  <div className="dark-skeleton" style={{ height: 18, width: '96%' }} />
-                  <div className="dark-skeleton" style={{ height: 18, width: '86%' }} />
-                  <div className="dark-skeleton" style={{ height: 18, width: '55%' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 10 }}>
+                  <div className="dark-skeleton" style={{ height: 16, width: '100%' }} />
+                  <div className="dark-skeleton" style={{ height: 16, width: '94%' }} />
+                  <div className="dark-skeleton" style={{ height: 16, width: '97%' }} />
+                  <div className="dark-skeleton" style={{ height: 16, width: '88%' }} />
+                  <div className="dark-skeleton" style={{ height: 16, width: '60%' }} />
                 </div>
               </div>
             </motion.section>
@@ -499,7 +725,10 @@ export default function App() {
                     <span className="summary-label-dot" />
                     Summary
                   </span>
-                  <span className="summary-word-count">{wordCount} words</span>
+                  <div className="summary-meta-badges">
+                    <span className="summary-badge-pill">~{readingTimeSeconds}s read</span>
+                    <span className="summary-badge-pill">{wordCount} words</span>
+                  </div>
                 </div>
 
                 <TypewriterText text={summary} />
@@ -509,49 +738,146 @@ export default function App() {
                     id="copy-summary-btn"
                     className="action-btn"
                     onClick={handleCopy}
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                   >
                     {copiedRecently ? (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="20 6 9 17 4 12"/>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#27AE60" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12" />
                       </svg>
                     ) : (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                       </svg>
                     )}
-                    {copiedRecently ? 'Copied!' : 'Copy'}
+                    <span>{copiedRecently ? 'Copied to Clipboard' : 'Copy'}</span>
                   </motion.button>
 
-                  <motion.a
-                    href={videoMeta?.watchUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="action-btn"
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                    style={{ textDecoration: 'none' }}
+                  <motion.button
+                    className={`action-btn ${speaking ? 'active' : ''}`}
+                    onClick={handleToggleSpeech}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      {speaking ? (
+                        <>
+                          <rect x="6" y="4" width="4" height="16" />
+                          <rect x="14" y="4" width="4" height="16" />
+                        </>
+                      ) : (
+                        <>
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                        </>
+                      )}
                     </svg>
-                    Watch video
-                  </motion.a>
+                    <span>{speaking ? 'Stop Audio' : 'Listen'}</span>
+                  </motion.button>
+
+                  {videoMeta?.watchUrl && (
+                    <motion.a
+                      href={videoMeta.watchUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="action-btn"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                      <span>Watch video</span>
+                    </motion.a>
+                  )}
                 </div>
               </div>
             </motion.section>
           )}
         </AnimatePresence>
 
+        {/* ── Capabilities / Feature Cards Grid ── */}
+        <section className="features-section">
+          <div className="section-eyebrow">Why Summarize</div>
+          <div className="features-grid">
+            <motion.div
+              className="feature-card"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="feature-icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h4 className="feature-title">Direct Transcript Audio</h4>
+              <p className="feature-desc">Analyzes every spoken sentence and timestamp directly from YouTube closed captions.</p>
+            </motion.div>
+
+            <motion.div
+              className="feature-card"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.08 }}
+            >
+              <div className="feature-icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <h4 className="feature-title">Strict 150-Word Limit</h4>
+              <p className="feature-desc">Condensed into pure essential insight with zero filler, taking under 45 seconds to read.</p>
+            </motion.div>
+
+            <motion.div
+              className="feature-card"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.16 }}
+            >
+              <div className="feature-icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h4 className="feature-title">Zero Assumptions</h4>
+              <p className="feature-desc">Recounts real events, steps, numbers, and facts without making up hypothetical claims.</p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── FAQ Section ── */}
+        <section className="faq-section">
+          <div className="section-eyebrow">Frequently Asked Questions</div>
+          <div className="faq-list">
+            {FAQ_ITEMS.map((item, idx) => (
+              <FaqItem key={idx} q={item.q} a={item.a} />
+            ))}
+          </div>
+        </section>
+
         {/* ── Footer ── */}
         <motion.footer
           className="footer"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
         >
           <span>© 2026 Akshat Mohanty. Built with ❤️</span>
+          <button
+            className="back-to-top-btn"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            Back to top ↑
+          </button>
         </motion.footer>
       </div>
     </div>
@@ -562,12 +888,16 @@ export default function App() {
 function LoadingSpinner() {
   return (
     <motion.svg
-      width="15" height="15" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2.5"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
       animate={{ rotate: 360 }}
       transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
     >
-      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
     </motion.svg>
   );
 }
