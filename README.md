@@ -62,6 +62,6 @@ If you encounter any issue or bug:
 
 ---
 
-## 📄 License
+##  License
 
 © 2026 **Akshat Mohanty**.
