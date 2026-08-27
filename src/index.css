@@ -132,11 +132,11 @@ body {
 }
 
 .header {
-  width: 100%;
-  padding: 12px 20px;
+  width: auto;
+  padding: 10px 22px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
   background: rgba(250, 248, 245, 0.85);
