@@ -838,12 +838,6 @@ export default function App() {
           transition={{ delay: 0.6, duration: 0.5 }}
         >
           <span>© 2026 Akshat Mohanty. Built with ❤️</span>
-          <button
-            className="back-to-top-btn"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            Back to top ↑
-          </button>
         </motion.footer>
       </div>
     </div>
