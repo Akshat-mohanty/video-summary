@@ -54,9 +54,8 @@ const FAQ_ITEMS = [
 
 // ─── Animated Hero Title ──────────────────────────────────────────────────────
 function AnimatedTitle() {
-  const line1 = 'Summarize any';
-  const line2 = 'YouTube video';
-  const line3 = 'instantly.';
+  const line1 = 'Summarize any YouTube video';
+  const line2 = 'instantly.';
 
   const wordVariants = {
     hidden: { opacity: 0, y: 24, filter: 'blur(4px)' },
@@ -68,7 +67,7 @@ function AnimatedTitle() {
     }),
   };
 
-  const allWords = [...line1.split(' '), '||', ...line2.split(' '), '|||', ...line3.split(' ')];
+  const allWords = [...line1.split(' '), '||', ...line2.split(' ')];
   let wordIndex = 0;
   const elements = [];
   let lineBuffer = [];
