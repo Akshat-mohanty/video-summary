@@ -504,29 +504,6 @@ export default function App() {
             Paste any YouTube link to get a detailed summary<br />
             <span>in 150 words or fewer.</span>
           </motion.p>
-
-          {/* Quick 1-Click Sample Chips */}
-          <motion.div
-            className="sample-chips-row"
-            variants={fadeUp}
-            custom={3}
-            initial="hidden"
-            animate="visible"
-          >
-            <span className="sample-chips-label">Try an example:</span>
-            {SAMPLE_VIDEOS.map((s, idx) => (
-              <motion.button
-                key={idx}
-                className="sample-chip"
-                onClick={() => handleTrySample(s.url)}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                disabled={loading}
-              >
-                {s.label}
-              </motion.button>
-            ))}
-          </motion.div>
         </section>
 
         {/* ── Step Indicators ── */}
