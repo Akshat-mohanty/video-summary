@@ -123,12 +123,11 @@ body {
 .header-wrapper {
   width: 100%;
   max-width: 920px;
-  padding: 16px 20px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  padding: 24px 20px 0;
+  position: relative;
   display: flex;
   justify-content: center;
+  z-index: 10;
 }
 
 .header {
