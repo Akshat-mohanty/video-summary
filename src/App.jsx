@@ -617,7 +617,6 @@ export default function App() {
                     <span className="summary-label-dot" />
                     Generating Summary…
                   </span>
-                  <span className="summary-badge-pill">Gemini 2.5 Flash</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 10 }}>
                   <div className="dark-skeleton" style={{ height: 16, width: '100%' }} />
