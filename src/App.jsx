@@ -455,21 +455,6 @@ export default function App() {
       </div>
 
       <div className="page-content">
-        {/* ── Floating Island Header ── */}
-        <div className="header-wrapper">
-          <motion.header
-            className="header"
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="logo">
-              <div className="logo-icon">S</div>
-              <span className="logo-name">Summarize</span>
-            </div>
-          </motion.header>
-        </div>
-
         {/* ── Hero Section ── */}
         <section className="hero">
           <AnimatedTitle />
