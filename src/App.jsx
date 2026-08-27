@@ -594,35 +594,8 @@ export default function App() {
             </div>
           </motion.div>
 
-          {/* Loading Video Skeleton */}
+          {/* Video Preview Card */}
           <AnimatePresence mode="wait">
-            {(phase === 'fetching' || phase === 'analyzing') && !videoMeta && (
-              <motion.div
-                key="skeleton"
-                variants={scaleUp}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                style={{
-                  background: 'var(--surface)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 'var(--radius-md)',
-                  overflow: 'hidden',
-                  boxShadow: 'var(--shadow-sm)',
-                  maxWidth: '480px',
-                  width: '100%',
-                  margin: '0 auto',
-                }}
-              >
-                <div className="skeleton" style={{ aspectRatio: '16/9', width: '100%' }} />
-                <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div className="skeleton" style={{ height: 16, width: '80%', borderRadius: 4 }} />
-                  <div className="skeleton" style={{ height: 12, width: '40%', borderRadius: 4 }} />
-                </div>
-              </motion.div>
-            )}
-
-            {/* Video Preview Card */}
             {videoMeta && <VideoCard key="video-card" meta={videoMeta} />}
           </AnimatePresence>
         </section>
