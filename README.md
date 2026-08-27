@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎬 Summarize
+#  Summarize
 
 **Instant YouTube Video Summaries Powered by Gemini 2.5 Flash**
 
