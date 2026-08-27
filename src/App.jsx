@@ -492,17 +492,6 @@ export default function App() {
 
         {/* ── Hero Section ── */}
         <section className="hero">
-          <motion.div
-            className="hero-pill"
-            variants={fadeUp}
-            custom={0}
-            initial="hidden"
-            animate="visible"
-          >
-            <span>✦</span>
-            <span>Instant Video Intelligence</span>
-          </motion.div>
-
           <AnimatedTitle />
 
           <motion.p
