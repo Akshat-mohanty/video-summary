@@ -572,17 +572,8 @@ export default function App() {
               </motion.button>
             </div>
 
-            <div className="input-footer-row">
-              <span className="input-hint">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="16" x2="12" y2="12" />
-                  <line x1="12" y1="8" x2="12.01" y2="8" />
-                </svg>
-                Supports standard videos, shorts, podcasts, and livestreams
-              </span>
-
-              {(videoMeta || phase !== 'idle') && (
+            {(videoMeta || phase !== 'idle') && (
+              <div className="input-footer-row" style={{ justifyContent: 'flex-end' }}>
                 <button className="reset-btn" type="button" onClick={handleReset}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <polyline points="1 4 1 10 7 10" />
@@ -590,113 +581,111 @@ export default function App() {
                   </svg>
                   Reset
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </motion.div>
-
-          {/* Video Preview Card */}
-          <AnimatePresence mode="wait">
-            {videoMeta && <VideoCard key="video-card" meta={videoMeta} />}
-          </AnimatePresence>
         </section>
 
-        {/* ── Summary Box ── */}
+        {/* ── Side-by-Side Results Layout (Video Card + Summary Box) ── */}
         <AnimatePresence mode="wait">
-          {(phase === 'analyzing' || (loading && !summary)) && (
-            <motion.section
-              className="summary-section"
-              key="summary-skeleton"
+          {(videoMeta || phase === 'analyzing' || (loading && !summary) || summary) && (
+            <motion.div
+              className={`results-grid ${!videoMeta ? 'single-col' : ''}`}
               variants={scaleUp}
               initial="hidden"
               animate="visible"
               exit="exit"
+              layout
             >
-              <div className="summary-card">
-                <div className="summary-header">
-                  <span className="summary-label">
-                    <span className="summary-label-dot" />
-                    Generating Summary…
-                  </span>
+              {/* Left Column: Video Preview Card */}
+              {videoMeta && (
+                <div className="results-video-col">
+                  <VideoCard key="video-card" meta={videoMeta} />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 10 }}>
-                  <div className="dark-skeleton" style={{ height: 16, width: '100%' }} />
-                  <div className="dark-skeleton" style={{ height: 16, width: '94%' }} />
-                  <div className="dark-skeleton" style={{ height: 16, width: '97%' }} />
-                  <div className="dark-skeleton" style={{ height: 16, width: '88%' }} />
-                  <div className="dark-skeleton" style={{ height: 16, width: '60%' }} />
-                </div>
-              </div>
-            </motion.section>
-          )}
+              )}
 
-          {summary && (
-            <motion.section
-              className="summary-section"
-              key="summary"
-              variants={scaleUp}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-            >
-              <div className="summary-card">
-                <div className="summary-header">
-                  <span className="summary-label">
-                    <span className="summary-label-dot" />
-                    Summary
-                  </span>
-                  <div className="summary-meta-badges">
-                    <span className="summary-badge-pill">~{readingTimeSeconds}s read</span>
-                    <span className="summary-badge-pill">{wordCount} words</span>
+              {/* Right Column: Summary Card or Loading Skeleton */}
+              <div className="results-summary-col">
+                {(phase === 'analyzing' || (loading && !summary)) && (
+                  <div className="summary-card">
+                    <div className="summary-header">
+                      <span className="summary-label">
+                        <span className="summary-label-dot" />
+                        Generating Summary…
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 10 }}>
+                      <div className="dark-skeleton" style={{ height: 16, width: '100%' }} />
+                      <div className="dark-skeleton" style={{ height: 16, width: '94%' }} />
+                      <div className="dark-skeleton" style={{ height: 16, width: '97%' }} />
+                      <div className="dark-skeleton" style={{ height: 16, width: '88%' }} />
+                      <div className="dark-skeleton" style={{ height: 16, width: '60%' }} />
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <TypewriterText text={summary} />
+                {summary && (
+                  <div className="summary-card">
+                    <div className="summary-header">
+                      <span className="summary-label">
+                        <span className="summary-label-dot" />
+                        Summary
+                      </span>
+                      <div className="summary-meta-badges">
+                        <span className="summary-badge-pill">~{readingTimeSeconds}s read</span>
+                        <span className="summary-badge-pill">{wordCount} words</span>
+                      </div>
+                    </div>
 
-                <div className="summary-actions">
-                  <motion.button
-                    id="copy-summary-btn"
-                    className="action-btn"
-                    onClick={handleCopy}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    {copiedRecently ? (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#27AE60" strokeWidth="3">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    ) : (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                    )}
-                    <span>{copiedRecently ? 'Copied to Clipboard' : 'Copy'}</span>
-                  </motion.button>
+                    <TypewriterText text={summary} />
 
-                  <motion.button
-                    className={`action-btn ${speaking ? 'active' : ''}`}
-                    onClick={handleToggleSpeech}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      {speaking ? (
-                        <>
-                          <rect x="6" y="4" width="4" height="16" />
-                          <rect x="14" y="4" width="4" height="16" />
-                        </>
-                      ) : (
-                        <>
-                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-                        </>
-                      )}
-                    </svg>
-                    <span>{speaking ? 'Stop Audio' : 'Listen'}</span>
-                  </motion.button>
-                </div>
+                    <div className="summary-actions">
+                      <motion.button
+                        id="copy-summary-btn"
+                        className="action-btn"
+                        onClick={handleCopy}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        {copiedRecently ? (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#27AE60" strokeWidth="3">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                        )}
+                        <span>{copiedRecently ? 'Copied to Clipboard' : 'Copy'}</span>
+                      </motion.button>
+
+                      <motion.button
+                        className={`action-btn ${speaking ? 'active' : ''}`}
+                        onClick={handleToggleSpeech}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          {speaking ? (
+                            <>
+                              <rect x="6" y="4" width="4" height="16" />
+                              <rect x="14" y="4" width="4" height="16" />
+                            </>
+                          ) : (
+                            <>
+                              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                            </>
+                          )}
+                        </svg>
+                        <span>{speaking ? 'Stop Audio' : 'Listen'}</span>
+                      </motion.button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </motion.section>
+            </motion.div>
           )}
         </AnimatePresence>
 
