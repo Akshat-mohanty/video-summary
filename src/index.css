@@ -1090,6 +1090,17 @@ body {
   width: 100%;
 }
 
+.footer-link {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--text-primary);
+}
+
 .back-to-top-btn {
   background: none;
   border: none;

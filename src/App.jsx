@@ -781,7 +781,17 @@ export default function App() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          <span>© 2026 Akshat Mohanty. Built with ❤️</span>
+          <span>
+            © 2026 Akshat Mohanty. Built with ❤️ ·{' '}
+            <a
+              href="https://github.com/Akshat-mohanty/video-summary"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link"
+            >
+              Found a Bug?
+            </a>
+          </span>
         </motion.footer>
       </div>
     </div>
