@@ -167,32 +167,12 @@ body {
 .hero {
   width: 100%;
   max-width: 860px;
-  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  padding: var(--space-xl) var(--space-xl) var(--space-md);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-lg);
-}
-
-.hero-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.hero-eyebrow::before,
-.hero-eyebrow::after {
-  content: '';
-  width: 24px;
-  height: 1px;
-  background: var(--border-dark);
-  display: block;
+  gap: 14px;
 }
 
 .hero-title {
@@ -210,15 +190,19 @@ body {
 }
 
 .hero-subtitle {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--text-secondary);
-  max-width: 440px;
-  line-height: 1.6;
+  max-width: 380px;
+  line-height: 1.65;
   font-weight: 400;
   text-align: center;
   margin: 0 auto;
-  text-wrap: balance;
   letter-spacing: -0.01em;
+}
+
+.hero-subtitle span {
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 /* ============================================================

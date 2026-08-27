@@ -342,7 +342,8 @@ export default function App() {
           <AnimatedTitle />
 
           <motion.p className="hero-subtitle" variants={fadeUp} custom={2} initial="hidden" animate="visible">
-            Paste any YouTube link and get a<br />detailed summary in 150 words or fewer.
+            Paste any YouTube link to get a detailed summary<br />
+            <span>in 150 words or fewer.</span>
           </motion.p>
         </section>
 
