@@ -719,69 +719,89 @@ export default function App() {
         </AnimatePresence>
 
         {/* ── Capabilities / Feature Cards Grid ── */}
-        <section className="features-section">
-          <div className="section-eyebrow">Why Summarize</div>
-          <div className="features-grid">
-            <motion.div
-              className="feature-card"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4 }}
+        <AnimatePresence>
+          {phase === 'idle' && !summary && !videoMeta && !url.trim() && (
+            <motion.section
+              className="features-section"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
             >
-              <div className="feature-icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </div>
-              <h4 className="feature-title">Direct Transcript Audio</h4>
-              <p className="feature-desc">Analyzes every spoken sentence and timestamp directly from YouTube closed captions.</p>
-            </motion.div>
+              <div className="section-eyebrow">Why Summarize</div>
+              <div className="features-grid">
+                <motion.div
+                  className="feature-card"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className="feature-icon-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </div>
+                  <h4 className="feature-title">Direct Transcript Audio</h4>
+                  <p className="feature-desc">Analyzes every spoken sentence and timestamp directly from YouTube closed captions.</p>
+                </motion.div>
 
-            <motion.div
-              className="feature-card"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.08 }}
-            >
-              <div className="feature-icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <h4 className="feature-title">Strict 150-Word Limit</h4>
-              <p className="feature-desc">Condensed into pure essential insight with zero filler, taking under 45 seconds to read.</p>
-            </motion.div>
+                <motion.div
+                  className="feature-card"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.08 }}
+                >
+                  <div className="feature-icon-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </div>
+                  <h4 className="feature-title">Strict 150-Word Limit</h4>
+                  <p className="feature-desc">Condensed into pure essential insight with zero filler, taking under 45 seconds to read.</p>
+                </motion.div>
 
-            <motion.div
-              className="feature-card"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.16 }}
-            >
-              <div className="feature-icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
+                <motion.div
+                  className="feature-card"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.16 }}
+                >
+                  <div className="feature-icon-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  </div>
+                  <h4 className="feature-title">Zero Assumptions</h4>
+                  <p className="feature-desc">Recounts real events, steps, numbers, and facts without making up hypothetical claims.</p>
+                </motion.div>
               </div>
-              <h4 className="feature-title">Zero Assumptions</h4>
-              <p className="feature-desc">Recounts real events, steps, numbers, and facts without making up hypothetical claims.</p>
-            </motion.div>
-          </div>
-        </section>
+            </motion.section>
+          )}
+        </AnimatePresence>
 
         {/* ── FAQ Section ── */}
-        <section className="faq-section">
-          <div className="section-eyebrow">Frequently Asked Questions</div>
-          <div className="faq-list">
-            {FAQ_ITEMS.map((item, idx) => (
-              <FaqItem key={idx} q={item.q} a={item.a} />
-            ))}
-          </div>
-        </section>
+        <AnimatePresence>
+          {phase === 'idle' && !summary && !videoMeta && !url.trim() && (
+            <motion.section
+              className="faq-section"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+            >
+              <div className="section-eyebrow">Frequently Asked Questions</div>
+              <div className="faq-list">
+                {FAQ_ITEMS.map((item, idx) => (
+                  <FaqItem key={idx} q={item.q} a={item.a} />
+                ))}
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
 
         {/* ── Footer ── */}
         <motion.footer
